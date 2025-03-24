@@ -1,1 +1,1 @@
-# CS690-MKShopingListProject
+# CS690-MKShoppingListProject
