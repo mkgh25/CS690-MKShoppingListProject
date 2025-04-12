@@ -1,4 +1,10 @@
-﻿namespace shoppinglist;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;// added for special functions.
+
+
+namespace shoppinglist;
 
 class Program
 {//create classes of objects I want to use.
@@ -65,7 +71,7 @@ class Program
         List<string> lines = new List<string>();
         foreach (var item in items)
         {
-            string line = item.FoodName + "," + item.Status;
+            string line = item.GroceryCategory + "," + item.FoodName + "," + item.Status;
             lines.Add(line);
         }
         File.WriteAllLines(foodfilepath,lines);  
@@ -251,7 +257,7 @@ class Program
                     string status = foodparts[2];
                     if (status == "needed")
                     {
-                    Console.WriteLine($"- {foodName}");
+                    Console.WriteLine($"- {GroceryCategory}: {foodName}");
                     }
                 }
                 else
