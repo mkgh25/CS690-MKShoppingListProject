@@ -1,0 +1,6 @@
+fruit,bananas,have
+dairy,milk,have
+meats,beef,needed
+dairy,milk,have
+grains,pasta,needed
+sauces,tomato sauce,needed
