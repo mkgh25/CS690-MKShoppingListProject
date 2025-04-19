@@ -8,6 +8,7 @@ namespace shoppinglist;
 
 class Program
 {//create classes of objects I want to use.
+// arbitratry comment for testing 
     class FoodItem //create class (description of FoodItem food item is)
     {
         public string GroceryCategory {get;set;}
