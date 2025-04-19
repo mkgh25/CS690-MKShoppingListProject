@@ -1,0 +1,2 @@
+peanutbutter and jelly sandwich:bread,peanutbutter,jelly
+spaghetti:pasta,tomato sauce
