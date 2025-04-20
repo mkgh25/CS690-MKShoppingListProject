@@ -1,5 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿// using System;
+// using System.Collections.Generic;
+using shoppinglist;
+using shoppinglist.Models;
 using System.IO;
 using System.Linq;// added for special functions.
 
@@ -8,35 +10,38 @@ namespace shoppinglist;
 
 class Program
 {//create classes of objects I want to use.
-// arbitratry comment for testing 
-    class FoodItem //create class (description of FoodItem food item is)
-    {
-        public string GroceryCategory {get;set;}
-        public string FoodName {get;set;}
-        public string Status { get;set;}
-    }
-    class RecipeClass//create class of recipe (description of what a recipe is)
-    {
-        public string RecipeName { get; set;}
-        public List<string> Ingredients {get; set;}//creates a property that can be retrieved and set (value assigned)
-    }
-    class MealPlan//create class of mealsplan (description of what a mealplan is)
-    {
-        public string MealTime { get; set;}//which mealtime is this?
-        public DateTime Date { get; set;}//date for meal plan created for
-        public RecipeClass RecipeName { get; set;}//Recipe name from Recipe Class
-        public int MealNumber {get; set;}//what meal number
-    }
+
+    // class FoodItem //create class (description of FoodItem food item is)
+    // {
+    //     public string GroceryCategory {get;set;}
+    //     public string FoodName {get;set;}
+    //     public string Status { get;set;}
+    // }
+    // class Recipe//create class of recipe (description of what a recipe is)
+    // {
+    //     public string RecipeName { get; set;}
+    //     public List<string> Ingredients {get; set;}//creates a property that can be retrieved and set (value assigned)
+    // }
+    // class MealPlan//create class of mealsplan (description of what a mealplan is)
+    // {
+    //     public string MealTime { get; set;}//which mealtime is this?
+    //     public DateTime Date { get; set;}//date for meal plan created for
+    //     public Recipe RecipeName { get; set;}//Recipe name from Recipe Class
+    //     public int MealNumber {get; set;}//what meal number
+    // }
     //create the source of the data I want to import/use in program.
-    static string foodfilepath="food-database.txt";
-    static string recipefilepath="recipe-database.txt";
-    static string mealsfilepath="meals-database.txt";
+    // static string DataService.foodfilepath="food-database.txt";
+    // static string DataService.recipefilepath="recipe-database.txt";
+    // static string mealsfilepath="meals-database.txt";
+    List<FoodItem> items = DataService.LoadFoodItemList();
+    List<Recipe> recipes = DataService.LoadRecipeList();
+    List<MealPlan> meals = DataService.LoadMealPlanList();
 
     //creates a placeholder list for the data to be retrieved for other functions to be used.
     static List<FoodItem> LoadFoodItemList()
     {
         List<FoodItem> items = new List<FoodItem>();
-        string[] lines = File.ReadAllLines(foodfilepath);
+        string[] lines = File.ReadAllLines(DataService.foodfilepath);
         foreach (string line in lines)
         {
             string[] foodparts = line.Split(",");
@@ -51,18 +56,18 @@ class Program
         }
        return items; 
     } 
-    static List<RecipeClass> LoadRecipeList()
+    static List<Recipe> LoadRecipeList()
     {
-        List <RecipeClass> recipes = new List<RecipeClass>();
-        string[] lines = File.ReadAllLines(recipefilepath);
+        List <Recipe> recipes = new List<Recipe>();
+        string[] lines = File.ReadAllLines(DataService.recipefilepath);
         foreach (string line in lines)
         {
-            var recipeparts =line.Split(":");
+            var recipeparts = line.Split(":");
             if (recipeparts.Length == 2)
             {
                 string name = recipeparts[0].Trim();
                 List<string> ingredients = recipeparts[1].Split(",").Select(i=>i.Trim()).ToList();
-                recipes.Add(new RecipeClass
+                recipes.Add(new Recipe
                 {
                     RecipeName = name,
                     Ingredients = ingredients
@@ -74,7 +79,7 @@ class Program
     static List<MealPlan> LoadMealPlanList()
     {
         List <MealPlan> meals = new List<MealPlan>();
-        string[] lines = File.ReadAllLines(mealsfilepath);
+        string[] lines = File.ReadAllLines(DataService.mealsfilepath);
         foreach (string line in lines)
         {
             var mealparts =line.Split(",");
@@ -101,7 +106,7 @@ class Program
                         Date = date,
                         MealTime = mealtime,
                         MealNumber = mealnumber,
-                        RecipeName = new RecipeClass {RecipeName = recipeName}
+                        RecipeName = new Recipe {RecipeName = recipeName}
                     });
                 }
             }
@@ -117,9 +122,9 @@ class Program
             string line = item.GroceryCategory + "," + item.FoodName + "," + item.Status;
             lines.Add(line);
         }
-        File.WriteAllLines(foodfilepath,lines);  
+        File.WriteAllLines(DataService.foodfilepath, lines);  
     }
-    static void SaveRecipeList(List<RecipeClass> recipeitems)
+    static void SaveRecipeList(List<Recipe> recipeitems)
     {
         List<string> lines = new List<string>();
         foreach (var recipe in recipeitems)
@@ -127,7 +132,7 @@ class Program
             string line = recipe.RecipeName + ":" + string.Join(",",recipe.Ingredients);
             lines.Add(line);
         }
-        File.WriteAllLines(recipefilepath,lines);
+        File.WriteAllLines(DataService.recipefilepath,lines);
     }
 
     static void SaveMealPlanList(List<MealPlan> meals)
@@ -138,28 +143,28 @@ class Program
             string line = $"{meal.Date:yyyy-MM-dd},{meal.MealTime},{meal.MealNumber},{meal.RecipeName.RecipeName}";
             lines.Add(line);
         }
-        File.WriteAllLines(mealsfilepath, lines);
+        File.WriteAllLines(DataService.mealsfilepath, lines);
     }
 
 
     static void Main(string[] args)
     {//Create file and save
-        if (!File.Exists(foodfilepath))
+        if (!File.Exists(DataService.foodfilepath))
         {
-            File.Create(foodfilepath).Close();
+            File.Create(DataService.foodfilepath).Close();
         }
-        if (!File.Exists(recipefilepath))
+        if (!File.Exists(DataService.recipefilepath))
         {
-            File.Create(recipefilepath).Close();
+            File.Create(DataService.recipefilepath).Close();
         }
-        if (!File.Exists(mealsfilepath))
+        if (!File.Exists(DataService.mealsfilepath))
         {
-            File.Create(mealsfilepath).Close();
+            File.Create(DataService.mealsfilepath).Close();
         }
 
         //Call lists from methods
         List<FoodItem> items = LoadFoodItemList();
-        List<RecipeClass> rlist = LoadRecipeList();
+        List<Recipe> rlist = LoadRecipeList();
 
         //create variables
         string usercommand;
@@ -283,7 +288,7 @@ class Program
                     {
                         Console.Write("Enter a recipe name:");
                         string recipename = Console.ReadLine().Trim().ToLower();
-                        RecipeClass newRecipe = new RecipeClass 
+                        Recipe newRecipe = new Recipe 
                         {
                             RecipeName = recipename, Ingredients = new List<string>()
                         };
@@ -336,7 +341,7 @@ class Program
                             Console.WriteLine("Recipe name cannot be empty.");
                             continue;
                         }
-                        RecipeClass recipeToRemove=null;
+                        Recipe recipeToRemove=null;
                         foreach (var recipe in rlist)
                         {
                             if(recipe.RecipeName.ToLower() == recipetoremove)
@@ -375,7 +380,7 @@ class Program
                         String recipeName = Console.ReadLine().Trim().ToLower();
                         int mealnumber = mealList.Count + 1;
 
-                        RecipeClass selectRecipe = null;
+                        Recipe selectRecipe = null;
                         foreach(var recipe in rlist)
                         {
                             if (recipe.RecipeName.Equals(recipeName, StringComparison.OrdinalIgnoreCase))
@@ -391,7 +396,7 @@ class Program
                             Date = date,
                             MealTime = mealTime,
                             MealNumber = mealnumber,
-                            RecipeName = new RecipeClass{RecipeName = selectRecipe.RecipeName}
+                            RecipeName = new Recipe{RecipeName = selectRecipe.RecipeName}
                         });
                         SaveMealPlanList(mealList);
                         Console.WriteLine("Meal plan saved");                        
@@ -421,7 +426,7 @@ class Program
             else if (usercommand == "report")
                 {
                 Console.WriteLine("Shopping List Report => Needed Items by Grocery Category");
-                string [] shoplistreport = File.ReadAllLines(foodfilepath); 
+                string [] shoplistreport = File.ReadAllLines(DataService.foodfilepath); 
                 foreach (string line in shoplistreport)
                 {
                     string [] foodparts = line.Split(",");
