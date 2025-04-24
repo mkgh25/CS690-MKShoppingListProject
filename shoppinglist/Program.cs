@@ -13,62 +13,55 @@ class Program
 
     static void Main(string[] args)
     { 
+        IConsoleIO io = new ConsoleIO();
+        IDataService dataService = new FileDataService();
         //Create file and save
-        if (!File.Exists(DataService.foodfilepath))
-        {
-            File.Create(DataService.foodfilepath).Close();
-        }
-        if (!File.Exists(DataService.recipefilepath))
-        {
-            File.Create(DataService.recipefilepath).Close();
-        }
-        if (!File.Exists(DataService.mealsfilepath))
-        {
-            File.Create(DataService.mealsfilepath).Close();
-        }
-
-        //Call lists from methods
-        List<FoodItem> items = DataService.LoadFoodItemList();
-        List<Recipe> rlist = DataService.LoadRecipeList();
+        var fileDataService = dataService as FileDataService;
+        if (fileDataService != null)
+    {
+        if (!File.Exists(fileDataService.FoodFilePath)) File.Create(fileDataService.FoodFilePath).Close();
+        if (!File.Exists(fileDataService.RecipeFilePath)) File.Create(fileDataService.RecipeFilePath).Close();
+        if (!File.Exists(fileDataService.MealsFilePath)) File.Create(fileDataService.MealsFilePath).Close();
+    }
 
         //create variables
         string usercommand;
         //string fcommand;
         //string rcommand;
-        string mcommand;
+        //string mcommand;
 
 
         do
         {
 
-            Console.WriteLine("Enter a selection: ");
-            Console.WriteLine("shoppinglist = to manage shopping list");
-            Console.WriteLine("recipes = to manage recipes");
-            Console.WriteLine("mealplan = to manage mealplan");
-            Console.WriteLine("report = to display shopping list");
-            Console.WriteLine("exit = to exit program");
-            usercommand = Console.ReadLine();
+            io.WriteLine("Enter a selection: ");
+            io.WriteLine("shoppinglist = to manage shopping list");
+            io.WriteLine("recipes = to manage recipes");
+            io.WriteLine("mealplan = to manage mealplan");
+            io.WriteLine("report = to display shopping list");
+            io.WriteLine("exit = to exit program");
+            usercommand = io.ReadLine();
             //Console.WriteLine($"DEBUG: You typed '{usercommand}'");
 
             //Shopping list - module
 
             if (usercommand == "shoppinglist")
             {
-                ShoppingListModule.Run();
+                new ShoppingListModule(io, dataService).Run();
             }
             else if (usercommand == "recipes")
             {
-                RecipeModule.Run();
+               new RecipeModule(io, dataService).Run();
             }
             else if (usercommand == "mealplan")
             {
                 //mealplan - module
-                MealPlanModule.Run();
+                new MealPlanModule(io, dataService).Run();
 
             }
             else if (usercommand == "report")
             {
-                ReportModule.Run();
+                new ReportModule(io, dataService).Run();
             }
         } while (usercommand != "exit");
     }
