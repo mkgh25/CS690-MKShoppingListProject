@@ -6,18 +6,18 @@ using shoppinglist.Models;
 
 namespace shoppinglist
 {
-    public static class DataService
+    public class FileDataService : IDataService
     {
-        public static string foodfilepath = "food-database.txt";
-        public static string recipefilepath = "recipe-database.txt";
-        public static string mealsfilepath = "meals-database.txt";
+        public string FoodFilePath { get; set;} =  "food-database.txt";
+        public string RecipeFilePath { get; set;}  = "recipe-database.txt";
+        public string MealsFilePath { get; set;}  = "meals-database.txt";
 
-        public static List<FoodItem> LoadFoodItemList()
+        public List<FoodItem> LoadFoodItemList()
         {
             List<FoodItem> items = new List<FoodItem>();
-            if (!File.Exists(foodfilepath)) return items;
+            if (!File.Exists(FoodFilePath)) return items;
 
-            string[] lines = File.ReadAllLines(foodfilepath);
+            string[] lines = File.ReadAllLines(FoodFilePath);
             foreach (string line in lines)
             {
                 string[] foodparts = line.Split(",");
@@ -32,7 +32,7 @@ namespace shoppinglist
             return items;
         }
 
-        public static void SaveFoodItemList(List<FoodItem> items)
+        public void SaveFoodItemList(List<FoodItem> items)
         {
             List<string> lines = new List<string>();
             foreach (var item in items)
@@ -40,15 +40,15 @@ namespace shoppinglist
                 string line = $"{item.GroceryCategory},{item.FoodName},{item.Status}";
                 lines.Add(line);
             }
-            File.WriteAllLines(foodfilepath, lines);
+            File.WriteAllLines(FoodFilePath, lines);
         }
 
-        public static List<Recipe> LoadRecipeList()
+        public List<Recipe> LoadRecipeList()
         {
             List<Recipe> recipes = new List<Recipe>();
-            if (!File.Exists(recipefilepath)) return recipes;
+            if (!File.Exists(RecipeFilePath)) return recipes;
 
-            string[] lines = File.ReadAllLines(recipefilepath);
+            string[] lines = File.ReadAllLines(RecipeFilePath);
             foreach (string line in lines)
             {
                 var recipeparts = line.Split(":");
@@ -62,7 +62,7 @@ namespace shoppinglist
             return recipes;
         }
 
-        public static void SaveRecipeList(List<Recipe> recipes)
+        public void SaveRecipeList(List<Recipe> recipes)
         {
             List<string> lines = new List<string>();
             foreach (var recipe in recipes)
@@ -70,15 +70,15 @@ namespace shoppinglist
                 string line = recipe.RecipeName + ":" + string.Join(",", recipe.Ingredients);
                 lines.Add(line);
             }
-            File.WriteAllLines(recipefilepath, lines);
+            File.WriteAllLines(RecipeFilePath, lines);
         }
 
-        public static List<MealPlan> LoadMealPlanList()
+        public List<MealPlan> LoadMealPlanList()
         {
             List<MealPlan> meals = new List<MealPlan>();
-            if (!File.Exists(mealsfilepath)) return meals;
+            if (!File.Exists(MealsFilePath)) return meals;
 
-            string[] lines = File.ReadAllLines(mealsfilepath);
+            string[] lines = File.ReadAllLines(MealsFilePath);
             foreach (string line in lines)
             {
                 var parts = line.Split(",");
@@ -100,7 +100,7 @@ namespace shoppinglist
             return meals;
         }
 
-        public static void SaveMealPlanList(List<MealPlan> meals)
+        public void SaveMealPlanList(List<MealPlan> meals)
         {
             List<string> lines = new List<string>();
             foreach (var meal in meals)
@@ -108,7 +108,7 @@ namespace shoppinglist
                 string line = $"{meal.Date:yyyy-MM-dd},{meal.MealTime},{meal.MealNumber},{meal.RecipeName.RecipeName}";
                 lines.Add(line);
             }
-            File.WriteAllLines(mealsfilepath, lines);
+            File.WriteAllLines(MealsFilePath, lines);
         }
     }
 }

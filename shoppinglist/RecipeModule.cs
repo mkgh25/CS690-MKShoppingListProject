@@ -8,51 +8,60 @@ using System.Linq;
 namespace shoppinglist
 
 {
-    public static class RecipeModule
+    public class RecipeModule
 
     {
-        public static void Run()
+        private readonly IConsoleIO _io;
+        private readonly IDataService _dataService;
+        public RecipeModule(IConsoleIO io, IDataService dataService)
+        {
+            _io = io;
+            _dataService = dataService;
+        }
+
+        public void Run()
+
 // list<Recipe> recipeitems
         {
-            List<FoodItem> items = DataService.LoadFoodItemList();
-            List<Recipe> rlist = DataService.LoadRecipeList();
+            List<FoodItem> items = _dataService.LoadFoodItemList();
+            List<Recipe> rlist = _dataService.LoadRecipeList();
             string rcommand;
             do{
-                Console.WriteLine("Select one: add (to add a recipe), remove (to remove a recipe), menu (To go back to main menu)");
-                rcommand=Console.ReadLine()?.Trim().ToLower();
+                _io.WriteLine("Select one: add (to add a recipe), remove (to remove a recipe), menu (To go back to main menu)");
+                rcommand=_io.ReadLine()?.Trim().ToLower();
                 
 
                 if (rcommand=="add")
                 {
-                    Console.Write("Enter a recipe name:");
-                    string recipename = Console.ReadLine().Trim().ToLower();
+                    _io.WriteLine("Enter a recipe name:");
+                    string recipename = _io.ReadLine().Trim().ToLower();
                     Recipe newRecipe = new Recipe 
                     {
                        RecipeName = recipename, Ingredients = new List<string>()
                     };
                     string newingredient=" ";
                     do{
-                        Console.WriteLine("Enter new ingredient or type 'done' to finish:");
-                        newingredient = Console.ReadLine().Trim().ToLower();
+                        _io.WriteLine("Enter new ingredient or type 'done' to finish:");
+                        newingredient = _io.ReadLine().Trim().ToLower();
                         if (newingredient != "done")
                         {
                         newRecipe.Ingredients.Add(newingredient);//add ingredient to ingredient list
-                        Console.WriteLine("Ingredient added");
+                        _io.WriteLine("Ingredient added");
                         }
                     } while (newingredient.ToLower() !="done");
 
                     rlist.Add(newRecipe);//adding new recipe and ingredients to recipe list
-                    DataService.SaveRecipeList(rlist);
-                    Console.WriteLine("new recipe added");
+                    _dataService.SaveRecipeList(rlist);
+                    _io.WriteLine("new recipe added");
 
                 //check to see if ingredient is in is in shoppinglist
                     foreach (var ingredient in newRecipe.Ingredients)
                     {
                         if(!items.Any(i => i.FoodName.Equals(ingredient, StringComparison.OrdinalIgnoreCase)))
                         {
-                            Console.WriteLine($"Ingredient'{ingredient}' not found in shoppinglist");
-                            Console.Write("Enter grocery category for this item: ");
-                            string category = Console.ReadLine().Trim().ToLower();
+                            _io.WriteLine($"Ingredient'{ingredient}' not found in shoppinglist");
+                            _io.WriteLine("Enter grocery category for this item: ");
+                            string category = _io.ReadLine().Trim().ToLower();
                             if (string.IsNullOrEmpty(category))
                             {
                                 category = "misc";
@@ -65,16 +74,16 @@ namespace shoppinglist
                             });
                         }
                     }
-                    DataService.SaveFoodItemList(items); //save added ingredients to shopping list
-                    Console.WriteLine("ingredients added to shopping list");
+                    _dataService.SaveFoodItemList(items); //save added ingredients to shopping list
+                    _io.WriteLine("ingredients added to shopping list");
                     }
                 else if (rcommand=="remove")
                 {
-                    Console.Write("Enter a recipe to remove:");
-                    string recipetoremove = Console.ReadLine().Trim().ToLower();
+                    _io.WriteLine("Enter a recipe to remove:");
+                    string recipetoremove = _io.ReadLine().Trim().ToLower();
                     if (string.IsNullOrEmpty(recipetoremove))
                     {
-                        Console.WriteLine("Recipe name cannot be empty.");
+                        _io.WriteLine("Recipe name cannot be empty.");
                         continue;
                     }
                     Recipe recipeToRemove=null;
@@ -89,12 +98,12 @@ namespace shoppinglist
                     if(recipeToRemove != null)
                     {
                         rlist.Remove(recipeToRemove);
-                        DataService.SaveRecipeList(rlist);
-                        Console.WriteLine("Recipe removed!");
+                        _dataService.SaveRecipeList(rlist);
+                        _io.WriteLine("Recipe removed!");
                     }           
                     else
                     {
-                        Console.WriteLine("Recipe not Found, please try again");
+                        _io.WriteLine("Recipe not Found, please try again");
                     }
                 }
             } while(rcommand !="menu");

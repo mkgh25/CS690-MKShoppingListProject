@@ -4,3 +4,5 @@ meats,beef,needed
 dairy,milk,have
 grains,pasta,needed
 sauces,tomato sauce,needed
+fruit,oranges,needed
+bakery,tortillas,needed
